@@ -1,0 +1,45 @@
+# Зависимости Node.js
+node_modules/
+
+# Результаты тестов Playwright
+test-results/
+playwright-report/
+blob-report/
+
+# Скриншоты и видео (генерируются при падении тестов)
+screenshots/
+videos/
+
+# Файлы окружения (содержат секреты!)
+.env
+.env.local
+.env.production
+
+# TypeScript скомпилированные файлы
+dist/
+*.js.map
+
+# Системные файлы macOS
+.DS_Store
+
+# Системные файлы Windows
+Thumbs.db
+desktop.ini
+
+# Логи
+*.log
+npm-debug.log*
+
+# IDE файлы
+.idea/
+.vscode/settings.json
+*.swp
+*.swo
+
+# Авторизационное состояние браузера (может содержать токены)
+auth-state/
+*.storageState.json
+
+# Временные файлы
+tmp/
+temp/
