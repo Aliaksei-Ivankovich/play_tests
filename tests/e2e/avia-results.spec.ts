@@ -14,9 +14,7 @@ import aviaData from '../../test-data/avia-search.json';
  * 6. Наличие формы поиска на странице результатов
  */
 
-test.use({
-  baseURL: 'https://alfabit.org',
-});
+// baseURL берётся из переменной окружения BASE_URL (см. .env и playwright.config.ts)
 
 /**
  * Вспомогательная функция: вернуть дату завтра в формате DD.MM.YYYY
@@ -220,10 +218,6 @@ test.describe('Страница результатов поиска авиаби
 // ─────────────────────────────────────────────────────────────────────────
 
 test.describe('Полный сценарий поиска (форма → результаты)', () => {
-
-  test.use({
-    baseURL: 'https://alfabit.org',
-  });
 
   test('поиск через популярное направление «Тбилиси» показывает результаты', async ({ aviaSearchPage }) => {
     await aviaSearchPage.goto();

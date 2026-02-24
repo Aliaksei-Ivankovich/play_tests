@@ -15,9 +15,7 @@ import aviaData from '../../test-data/avia-search.json';
  * 7. Вкладки навигации
  */
 
-test.use({
-  baseURL: 'https://alfabit.org',
-});
+// baseURL берётся из переменной окружения BASE_URL (см. .env и playwright.config.ts)
 
 test.describe('Страница поиска авиабилетов — alfabit.org/ru/travel/avia', () => {
 
