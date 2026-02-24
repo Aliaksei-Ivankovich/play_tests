@@ -1,26 +1,66 @@
 # 🎭 Playwright Test Project
 
-Проект автоматизированного E2E тестирования на основе **Playwright** + **TypeScript**.
+Проект автоматизированного **E2E тестирования** веб-приложений на основе [Playwright](https://playwright.dev) + [TypeScript](https://www.typescriptlang.org).
+
+> 📖 Это руководство написано для людей без глубокого знания JavaScript/TypeScript.
+> Каждый термин объяснён простыми словами.
+
+---
 
 ## 📋 Содержание
 
+- [Что такое Playwright и зачем он нужен](#что-такое-playwright-и-зачем-он-нужен)
 - [Технологии](#технологии)
 - [Структура проекта](#структура-проекта)
-- [Установка](#установка)
+- [Установка с нуля](#установка-с-нуля)
 - [Настройка окружения](#настройка-окружения)
 - [Запуск тестов](#запуск-тестов)
-- [Написание тестов](#написание-тестов)
-- [CI/CD](#cicd)
+- [Как устроен тест](#как-устроен-тест)
+- [Написание первого теста](#написание-первого-теста)
+- [Паттерн Page Object Model](#паттерн-page-object-model)
+- [Полезные команды Playwright](#полезные-команды-playwright)
+- [Что делать когда тест упал](#что-делать-когда-тест-упал)
+- [CI/CD — автозапуск на GitHub](#cicd--автозапуск-на-github)
+- [Публикация на GitHub](#публикация-на-github)
+- [Частые вопросы](#частые-вопросы)
+
+---
+
+## Что такое Playwright и зачем он нужен?
+
+**Playwright** — это инструмент, который управляет браузером вместо человека.
+
+Представьте, что вам нужно каждый день проверять: открывается ли сайт, работает ли форма входа, правильно ли отображаются данные. Делать это вручную — долго и скучно. Playwright делает это автоматически.
+
+```
+Человек вручную:                   Playwright автоматически:
+─────────────────────────          ─────────────────────────
+1. Открыть браузер                 1. Открыть браузер ✅
+2. Перейти на сайт         →       2. Перейти на сайт ✅
+3. Ввести логин и пароль           3. Ввести логин и пароль ✅
+4. Нажать «Войти»                  4. Нажать «Войти» ✅
+5. Проверить, что вошли            5. Проверить результат ✅
+                                   Время: 3 секунды. Каждый раз.
+```
+
+**Playwright умеет:**
+- Работать в Chrome, Firefox и Safari одновременно
+- Тестировать мобильные версии сайтов
+- Делать скриншоты и видеозаписи
+- Перехватывать сетевые запросы
+- Запускаться в «невидимом» режиме (без GUI) на серверах
 
 ---
 
 ## 🛠 Технологии
 
-| Технология | Версия | Описание |
-|---|---|---|
-| [Playwright](https://playwright.dev) | ^1.50 | Фреймворк для E2E тестирования |
-| [TypeScript](https://www.typescriptlang.org) | ^5.7 | Язык программирования |
-| [Node.js](https://nodejs.org) | ≥ 18 | Среда выполнения |
+| Технология | Для чего нужна |
+|---|---|
+| **[Node.js](https://nodejs.org)** | Среда запуска — «движок», на котором всё работает. Как Java для Java-программ |
+| **[npm](https://npmjs.com)** | Менеджер пакетов — устанавливает библиотеки. Как «магазин приложений» для Node.js |
+| **[TypeScript](https://www.typescriptlang.org)** | Язык написания тестов. Это JavaScript с подсказками типов — меньше ошибок |
+| **[Playwright](https://playwright.dev)** | Фреймворк тестирования — управляет браузером и проверяет результаты |
+| **[dotenv](https://github.com/motdotla/dotenv)** | Загружает настройки из файла `.env` |
 
 ---
 
@@ -28,201 +68,553 @@
 
 ```
 play_tests/
-├── .github/
-│   └── workflows/
-│       └── playwright.yml       # CI/CD пайплайн GitHub Actions
 │
-├── pages/                       # Page Object Models (POM)
-│   ├── BasePage.ts              # Базовый класс для всех страниц
-│   ├── LoginPage.ts             # Страница входа (пример)
-│   └── index.ts                 # Экспорт всех POM
+├── 📁 .github/
+│   └── 📁 workflows/
+│       ├── playwright.yml     # Автозапуск тестов на GitHub
+│       └── README.md          # Описание CI/CD
 │
-├── tests/
-│   ├── e2e/                     # E2E тесты
-│   │   ├── example.spec.ts      # Примеры базовых тестов
-│   │   └── login.spec.ts        # Тесты входа (пример)
-│   └── fixtures/
-│       └── base.fixtures.ts     # Кастомные фикстуры
+├── 📁 pages/                  # Page Object Models — описание страниц приложения
+│   ├── BasePage.ts            # Общие методы для всех страниц
+│   ├── LoginPage.ts           # Страница входа (пример)
+│   ├── index.ts               # Список экспортов
+│   └── README.md              # Описание паттерна POM
 │
-├── utils/                       # Вспомогательные утилиты
-│   ├── api.ts                   # API клиент для тестов
-│   ├── helpers.ts               # Общие вспомогательные функции
-│   └── index.ts                 # Экспорт утилит
+├── 📁 tests/                  # Все тесты
+│   ├── 📁 e2e/                # E2E тесты (основные сценарии)
+│   │   ├── example.spec.ts    # Рабочие примеры
+│   │   ├── login.spec.ts      # Шаблон тестов входа
+│   │   └── README.md          # Как писать тесты
+│   │
+│   ├── 📁 fixtures/           # Заготовки для тестов
+│   │   ├── base.fixtures.ts   # Базовые фикстуры
+│   │   └── README.md          # Что такое фикстуры
+│   │
+│   └── README.md              # Обзор папки tests/
 │
-├── test-data/                   # Тестовые данные
-│   └── users.json               # Данные пользователей
+├── 📁 utils/                  # Вспомогательные инструменты
+│   ├── helpers.ts             # Мелкие функции-помощники
+│   ├── api.ts                 # HTTP клиент для API запросов
+│   ├── index.ts               # Список экспортов
+│   └── README.md              # Описание утилит
 │
-├── .env.example                 # Пример переменных окружения
-├── .gitignore                   # Исключения для Git
-├── package.json                 # Зависимости и скрипты
-├── playwright.config.ts         # Конфигурация Playwright
-├── tsconfig.json                # Конфигурация TypeScript
-└── README.md                    # Документация
+├── 📁 test-data/              # Тестовые данные (JSON файлы)
+│   ├── users.json             # Данные пользователей
+│   └── README.md              # Как работать с тестовыми данными
+│
+├── .env.example               # Шаблон переменных окружения
+├── .gitignore                 # Что НЕ загружать на GitHub
+├── package.json               # Список зависимостей и команды запуска
+├── playwright.config.ts       # Настройки Playwright
+├── tsconfig.json              # Настройки TypeScript
+└── README.md                  # Этот файл
 ```
+
+> 📌 В каждой папке есть свой `README.md` с подробным описанием
 
 ---
 
-## 🚀 Установка
+## 🚀 Установка с нуля
 
-### 1. Клонировать репозиторий
+### Что нужно установить перед началом
 
+#### 1. Node.js
+
+Playwright работает на Node.js. Проверьте, установлен ли он:
 ```bash
-git clone https://github.com/<your-username>/<repo-name>.git
-cd <repo-name>
+node --version
 ```
 
-### 2. Установить зависимости
+Если команда не найдена — скачайте Node.js с [nodejs.org](https://nodejs.org) (выбирайте **LTS** версию).
+
+#### 2. Клонировать репозиторий
+
+```bash
+git clone https://github.com/<ваш-username>/<имя-репозитория>.git
+cd <имя-репозитория>
+```
+
+> **Что такое `git clone`?** Это скачивание копии проекта с GitHub на ваш компьютер.
+
+#### 3. Установить зависимости
 
 ```bash
 npm install
 ```
 
-### 3. Установить браузеры Playwright
+> **Что происходит?** npm читает файл `package.json`, видит список нужных библиотек и скачивает их в папку `node_modules/`. Эта папка может занимать сотни МБ — это нормально.
+
+#### 4. Установить браузеры
 
 ```bash
 npx playwright install
 ```
 
+> **Что происходит?** Playwright скачивает свои версии Chrome, Firefox и Safari. Это нужно, чтобы тесты работали одинаково на любом компьютере.
+
 ---
 
 ## ⚙️ Настройка окружения
 
-Скопируйте файл примера и заполните своими значениями:
+Тестам нужно знать, **какой сайт тестировать** и какие данные использовать. Эти настройки хранятся в файле `.env`.
+
+### Шаг 1: Создать `.env` файл
 
 ```bash
 cp .env.example .env
 ```
 
-Отредактируйте `.env`:
+> Это копирует файл-пример. Теперь у вас есть `.env` для заполнения.
+
+### Шаг 2: Заполнить `.env` своими значениями
+
+Откройте файл `.env` и замените значения:
 
 ```env
-BASE_URL=https://your-app.com
-TEST_USER_EMAIL=test@example.com
-TEST_USER_PASSWORD=your_password
+# URL сайта, который тестируем
+BASE_URL=https://ваш-сайт.com
+
+# Данные тестового пользователя
+TEST_USER_EMAIL=тест@пример.com
+TEST_USER_PASSWORD=ваш_тестовый_пароль
 ```
 
-> ⚠️ Никогда не добавляйте `.env` в git — он содержит секреты!
+### ⚠️ Важно!
+
+`.env` файл **никогда не попадает на GitHub** (он в `.gitignore`). Это правильно — в нём могут быть пароли. Каждый разработчик создаёт свой `.env` локально.
 
 ---
 
 ## ▶️ Запуск тестов
 
-| Команда | Описание |
+### Основные команды
+
+| Команда | Что делает |
 |---|---|
-| `npm test` | Запустить все тесты |
-| `npm run test:headed` | Запустить с видимым браузером |
-| `npm run test:ui` | Запустить в интерактивном UI режиме |
-| `npm run test:debug` | Запустить в режиме отладки |
+| `npm test` | Запустить все тесты во всех браузерах |
 | `npm run test:chromium` | Только в Chrome |
 | `npm run test:firefox` | Только в Firefox |
 | `npm run test:webkit` | Только в Safari |
-| `npm run test:mobile` | На мобильных устройствах |
-| `npm run test:report` | Открыть HTML-отчёт |
-| `npm run codegen` | Записать тест с помощью кодогенератора |
+| `npm run test:mobile` | На эмуляции мобильных устройств |
+| `npm run test:headed` | Запустить с **видимым** браузером (можно наблюдать) |
+| `npm run test:ui` | Открыть визуальный интерфейс управления тестами |
+| `npm run test:debug` | Режим отладки — тест останавливается на каждой строке |
+| `npm run test:report` | Открыть HTML-отчёт последнего запуска |
+| `npm run codegen` | Записать тест — браузер откроется, вы кликаете, код пишется сам |
 
-### Примеры запуска конкретных тестов
+### Запустить конкретный тест или файл
 
 ```bash
-# Запустить тест из конкретного файла
+# Один конкретный файл
 npx playwright test tests/e2e/login.spec.ts
 
-# Запустить тест по названию
+# Только в Chrome
+npx playwright test tests/e2e/login.spec.ts --project=chromium
+
+# Тест по части названия
 npx playwright test -g "успешный вход"
 
-# Запустить с тегом
+# Все тесты с тегом @smoke
 npx playwright test --grep @smoke
+```
+
+### Режим UI — самый удобный для начала
+
+```bash
+npm run test:ui
+```
+
+Откроется визуальный интерфейс, где можно:
+- Видеть список всех тестов
+- Запускать их по одному кнопкой
+- Видеть скриншоты каждого шага
+- Смотреть видеозапись теста
+
+---
+
+## 🔍 Как устроен тест
+
+Разберём анатомию тестового файла по шагам:
+
+```typescript
+// 📦 ИМПОРТЫ — подключаем нужные инструменты
+import { test, expect } from '../fixtures/base.fixtures';
+//       ^^^^   ^^^^^^
+//       test   — функция для создания теста
+//       expect — функция для проверки результата
+
+// 📂 ГРУППА ТЕСТОВ — объединяет связанные тесты
+test.describe('Вход в личный кабинет', () => {
+
+  // 🔄 ХУКИ — код, который запускается автоматически
+  test.beforeEach(async ({ page }) => {
+    // Этот код выполняется ПЕРЕД КАЖДЫМ тестом в группе
+    await page.goto('/login'); // открываем страницу входа
+  });
+
+  // ✅ ОДИН ТЕСТ
+  test('успешный вход с верными данными', async ({ page }) => {
+    //                                    ^^^^^^^^^^^^^^^^^^^^
+    //              { page } — это вкладка браузера. Всё взаимодействие через неё.
+
+    // ДЕЙСТВИЕ: вводим данные
+    await page.getByLabel('Email').fill('user@example.com');
+    await page.getByLabel('Пароль').fill('password123');
+    await page.getByRole('button', { name: 'Войти' }).click();
+
+    // ПРОВЕРКА: убеждаемся что вошли
+    await expect(page).toHaveURL('/dashboard');
+    //     ^^^^^^ — если это условие НЕ выполнится, тест упадёт с ошибкой
+  });
+
+});
+```
+
+### Что означает `async` / `await`?
+
+Работа с браузером занимает время. `async`/`await` говорит программе: «подожди, пока это действие завершится, и только потом иди дальше».
+
+```typescript
+// ❌ Без await — код не ждёт загрузки страницы
+page.goto('/login');
+page.click('button'); // ошибка! страница ещё не загрузилась
+
+// ✅ С await — код ждёт каждый шаг
+await page.goto('/login');  // ждём загрузки
+await page.click('button'); // только потом кликаем
 ```
 
 ---
 
-## ✍️ Написание тестов
+## ✍️ Написание первого теста
 
-### Паттерн Page Object Model (POM)
+### Задача: написать тест «сайт открывается и показывает правильный заголовок»
 
-Создайте новый файл в `pages/`:
+#### Шаг 1: Создайте файл `tests/e2e/homepage.spec.ts`
 
 ```typescript
-// pages/MyPage.ts
+import { test, expect } from '@playwright/test';
+
+test.describe('Главная страница', () => {
+
+  test('сайт открывается', async ({ page }) => {
+    // Открываем сайт (BASE_URL берётся из .env)
+    await page.goto('/');
+
+    // Проверяем заголовок вкладки
+    await expect(page).toHaveTitle(/Мой Сайт/);
+  });
+
+  test('кнопка «Войти» видна', async ({ page }) => {
+    await page.goto('/');
+
+    // Ищем кнопку по тексту
+    const loginButton = page.getByRole('button', { name: 'Войти' });
+
+    // Проверяем, что она видна
+    await expect(loginButton).toBeVisible();
+  });
+
+});
+```
+
+#### Шаг 2: Запустите тест
+
+```bash
+npx playwright test tests/e2e/homepage.spec.ts --headed
+```
+
+Флаг `--headed` открывает видимый браузер — можно наблюдать за выполнением.
+
+#### Шаг 3: Посмотрите отчёт
+
+```bash
+npm run test:report
+```
+
+---
+
+## 📐 Паттерн Page Object Model
+
+Когда тестов становится много, код начинает повторяться. Паттерн **Page Object Model (POM)** решает эту проблему.
+
+### Суть
+
+Каждая **страница** приложения описывается в отдельном классе в папке `pages/`.
+Тесты **используют** эти классы, а не работают напрямую с локаторами.
+
+### Сравнение подходов
+
+```typescript
+// ❌ БЕЗ POM — локаторы разбросаны по тестам
+test('вход', async ({ page }) => {
+  await page.locator('#email').fill('test@test.com');     // дублируется
+  await page.locator('#password').fill('pass');           // дублируется
+  await page.locator('[data-testid="login-btn"]').click();// дублируется
+});
+
+test('другой тест с логином', async ({ page }) => {
+  await page.locator('#email').fill('admin@test.com');    // дублируется!
+  await page.locator('#password').fill('admin');          // дублируется!
+  await page.locator('[data-testid="login-btn"]').click();// дублируется!
+});
+```
+
+```typescript
+// ✅ С POM — чисто и без повторов
+// pages/LoginPage.ts описывает страницу один раз
+// В тестах просто вызываем метод:
+
+test('вход', async ({ loginPage }) => {
+  await loginPage.login('test@test.com', 'pass'); // коротко и понятно
+});
+
+test('другой тест с логином', async ({ loginPage }) => {
+  await loginPage.login('admin@test.com', 'admin'); // один метод, нет повторов
+});
+```
+
+### Как создать Page Object для новой страницы
+
+1. Создайте файл `pages/МояСтраница.ts`:
+
+```typescript
 import { Page, Locator, expect } from '@playwright/test';
 import { BasePage } from './BasePage';
 
-export class MyPage extends BasePage {
-  private readonly myButton: Locator;
+export class МояСтраница extends BasePage {
+  // Локаторы элементов
+  private readonly заголовок: Locator;
+  private readonly кнопка: Locator;
 
   constructor(page: Page) {
     super(page);
-    this.myButton = page.getByRole('button', { name: 'Click me' });
+    // getByRole — лучший способ найти элемент (доступность + устойчивость)
+    this.заголовок = page.getByRole('heading', { level: 1 });
+    this.кнопка = page.getByRole('button', { name: 'Отправить' });
   }
 
+  // Методы — действия на странице
   async goto(): Promise<void> {
-    await this.navigate('/my-page');
+    await this.navigate('/мой-путь');
   }
 
-  async clickButton(): Promise<void> {
-    await this.myButton.click();
+  async нажатьКнопку(): Promise<void> {
+    await this.кнопка.click();
+  }
+
+  async проверитьЗаголовок(текст: string): Promise<void> {
+    await expect(this.заголовок).toHaveText(текст);
   }
 }
 ```
 
-### Создание теста
+2. Добавьте экспорт в `pages/index.ts`:
 
 ```typescript
-// tests/e2e/my-feature.spec.ts
-import { test, expect } from '../fixtures/base.fixtures';
-
-test.describe('Моя функциональность', () => {
-  test('проверка кнопки', async ({ page }) => {
-    await page.goto('/');
-    await expect(page.getByRole('button')).toBeVisible();
-  });
-});
+export { МояСтраница } from './МояСтраница';
 ```
 
-### Использование фикстур
+3. Используйте в тесте:
 
 ```typescript
-// Подключить готовые фикстуры
-import { test, expect } from '../fixtures/base.fixtures';
+import { МояСтраница } from '../../pages';
 
-test('тест с фикстурами', async ({ loginPage, apiClient }) => {
-  await loginPage.goto();
-  // loginPage и apiClient уже созданы и готовы к использованию
+test('проверка заголовка', async ({ page }) => {
+  const myPage = new МояСтраница(page);
+  await myPage.goto();
+  await myPage.проверитьЗаголовок('Добро пожаловать');
 });
 ```
 
 ---
 
-## 🔄 CI/CD
+## 🔎 Полезные команды Playwright
 
-Проект настроен для работы с **GitHub Actions**.
+### Как найти элемент на странице
 
-### Что происходит при пуше в `main` / `develop`:
+```typescript
+// По роли (рекомендуется!)
+page.getByRole('button', { name: 'Войти' })
+page.getByRole('link', { name: 'Регистрация' })
+page.getByRole('heading', { name: 'Заголовок' })
+page.getByRole('textbox', { name: 'Поиск' })
 
-1. Запускается матрица из 4 шардов параллельно
-2. Устанавливаются браузеры
-3. Запускаются все тесты
-4. Отчёты объединяются и загружаются как артефакт
+// По тексту
+page.getByText('Добро пожаловать')
+page.getByText('Сохранить', { exact: true }) // точное совпадение
 
-### Настройка секретов в GitHub
+// По подписи поля
+page.getByLabel('Email')
+page.getByLabel('Пароль')
 
-Перейдите: `Settings → Secrets and variables → Actions`
+// По атрибуту data-testid (разработчики специально добавляют для тестов)
+page.getByTestId('submit-button')
 
-| Секрет | Описание |
-|---|---|
-| `BASE_URL` | URL тестируемого приложения |
-| `API_URL` | URL API (если отличается) |
+// По placeholder
+page.getByPlaceholder('Введите email...')
 
----
+// По CSS (не рекомендуется, хрупко)
+page.locator('.btn-primary')
+page.locator('#email')
+```
 
-## 📊 Отчёты
+### Действия с элементами
 
-После запуска тестов:
+```typescript
+await locator.click()                    // клик
+await locator.fill('текст')              // ввести текст (очищает поле)
+await locator.type('текст')              // печатать посимвольно
+await locator.clear()                    // очистить поле
+await locator.selectOption('значение')   // выбрать в select
+await locator.check()                    // отметить чекбокс
+await locator.uncheck()                  // снять отметку чекбокса
+await locator.hover()                    // навести мышь
+await locator.press('Enter')             // нажать клавишу
+await locator.scrollIntoViewIfNeeded()   // прокрутить до элемента
+```
+
+### Проверки (`expect`)
+
+```typescript
+await expect(locator).toBeVisible()            // элемент виден
+await expect(locator).toBeHidden()             // элемент скрыт
+await expect(locator).toBeEnabled()            // элемент активен
+await expect(locator).toBeDisabled()           // элемент заблокирован
+await expect(locator).toHaveText('текст')      // содержит текст
+await expect(locator).toContainText('часть')   // содержит часть текста
+await expect(locator).toHaveValue('значение')  // поле имеет значение
+await expect(locator).toHaveCount(3)           // найдено 3 элемента
+await expect(page).toHaveURL('/путь')          // текущий URL
+await expect(page).toHaveTitle('заголовок')   // заголовок вкладки
+```
+
+### Кодогенератор — пишет тест за вас!
 
 ```bash
-# Открыть HTML-отчёт
+npm run codegen
+```
+
+Откроется браузер. Вы кликаете по сайту — Playwright пишет код.
+Это отличный способ быстро создать основу теста.
+
+---
+
+## 🩺 Что делать когда тест упал?
+
+### 1. Читайте сообщение об ошибке
+
+```
+Error: Тест "успешный вход" упал
+  Строка: await expect(page).toHaveURL('/dashboard');
+  Получено: "http://localhost/login"
+  Ожидалось: URL содержащий "/dashboard"
+```
+
+Ошибка говорит: «мы ожидали попасть на `/dashboard`, но остались на `/login`» — значит вход не произошёл.
+
+### 2. Откройте HTML отчёт
+
+```bash
 npm run test:report
 ```
 
-Отчёты хранятся в:
-- `playwright-report/` — HTML отчёт
-- `test-results/` — JSON результаты и артефакты (скриншоты, видео)
+В отчёте для каждого упавшего теста есть:
+- 📸 **Скриншот** — что было на экране в момент ошибки
+- 🎥 **Видеозапись** — весь тест от начала до падения
+- 🔍 **Trace** — подробная запись каждого действия с DOM-снимками
+
+### 3. Запустите тест в режиме отладки
+
+```bash
+npx playwright test tests/e2e/login.spec.ts --debug
+```
+
+Откроется браузер с панелью управления — можно идти по шагам и смотреть что происходит.
+
+### 4. Запустите с видимым браузером
+
+```bash
+npx playwright test tests/e2e/login.spec.ts --headed --project=chromium
+```
+
+---
+
+## 🔄 CI/CD — автозапуск на GitHub
+
+После того как вы опубликуете проект на GitHub, тесты будут запускаться **автоматически** при каждом `git push`.
+
+Настройка уже сделана в `.github/workflows/playwright.yml`.
+
+### Как это выглядит в GitHub
+
+1. Вы делаете `git push`
+2. На GitHub во вкладке **Actions** появляется новый запуск
+3. Тесты запускаются параллельно в 4 потоках
+4. По завершении — в артефактах доступен HTML-отчёт
+
+> Подробнее смотрите README в папке `.github/workflows/`
+
+---
+
+## 🐙 Публикация на GitHub
+
+### Шаг 1: Создайте репозиторий на GitHub
+
+1. Войдите на [github.com](https://github.com)
+2. Нажмите **New repository** (зелёная кнопка)
+3. Введите название репозитория
+4. Выберите **Public** (чтобы делиться) или **Private**
+5. Нажмите **Create repository**
+
+### Шаг 2: Подключите локальный проект к GitHub
+
+```bash
+git remote add origin https://github.com/<ваш-username>/<имя-репо>.git
+git push -u origin main
+```
+
+### Шаг 3: Добавьте секреты для CI/CD
+
+Перейдите: **Settings** → **Secrets and variables** → **Actions** → **New repository secret**
+
+| Секрет | Значение |
+|---|---|
+| `BASE_URL` | URL вашего тестового окружения |
+| `API_URL` | URL API (если используется) |
+
+### Шаг 4: Проверьте что всё работает
+
+После `git push` перейдите во вкладку **Actions** — должен появиться запущенный пайплайн.
+
+### Как поделиться проектом
+
+- Дайте коллеге ссылку на репозиторий
+- Он делает `git clone`, затем `npm install` и `npx playwright install`
+- Создаёт свой `.env` по шаблону `.env.example`
+- Готово — тесты запускаются!
+
+---
+
+## ❓ Частые вопросы
+
+**Q: Браузер не открывается при запуске тестов?**
+> По умолчанию тесты запускаются в «невидимом» режиме (headless). Добавьте `--headed` чтобы видеть браузер.
+
+**Q: Тест работает у меня, но падает в CI?**
+> Скорее всего проблема с `BASE_URL`. Убедитесь что секрет `BASE_URL` добавлен в настройках GitHub репозитория.
+
+**Q: Как сфокусировать тест, чтобы запускался только он?**
+> Добавьте `.only` к тесту: `test.only('мой тест', ...)`. Но не забудьте убрать перед `git push`!
+
+**Q: Как пропустить тест?**
+> Добавьте `.skip`: `test.skip('мой тест', ...)`. Тест не запустится, но будет виден в отчёте как пропущенный.
+
+**Q: Как добавить новый браузер?**
+> Откройте `playwright.config.ts` и добавьте проект в раздел `projects`. Список доступных устройств: `npx playwright devices`.
+
+**Q: Где хранятся скриншоты и видео упавших тестов?**
+> В папке `test-results/`. Она не попадает в git (прописана в `.gitignore`), но доступна в артефактах GitHub Actions после запуска CI.
+
+**Q: Как запустить тест в браузере конкретной версии?**
+> Playwright скачивает и использует собственные версии браузеров — это гарантирует стабильность. Изменить версию браузера можно в `playwright.config.ts`.
