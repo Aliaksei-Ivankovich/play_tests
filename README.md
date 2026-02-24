@@ -206,17 +206,42 @@ TEST_USER_PASSWORD=ваш_тестовый_пароль
 
 ```bash
 # Один конкретный файл
-npx playwright test tests/e2e/login.spec.ts
+npx playwright test tests/e2e/avia-search.spec.ts
 
 # Только в Chrome
-npx playwright test tests/e2e/login.spec.ts --project=chromium
+npx playwright test tests/e2e/avia-search.spec.ts --project=chromium
 
 # Тест по части названия
-npx playwright test -g "успешный вход"
+npx playwright test -g "кнопка Найти заблокирована"
 
 # Все тесты с тегом @smoke
 npx playwright test --grep @smoke
 ```
+
+### 👁 Запустить один тест с видимым браузером
+
+Флаг `--headed` открывает браузер на экране — можно наблюдать за каждым шагом в реальном времени.
+
+```bash
+# Конкретный файл с видимым браузером
+npx playwright test tests/e2e/avia-search.spec.ts --headed
+
+# Один тест по названию (часть текста) с видимым браузером
+npx playwright test -g "клик на Тбилиси" --headed
+
+# Один тест по названию + только Chrome + видимый браузер
+npx playwright test -g "клик на Тбилиси" --headed --project=chromium
+```
+
+> 💡 **Совет:** добавьте `--project=chromium` чтобы не ждать Firefox и Safari — быстрее увидите результат.
+
+Если нужно **остановиться на каждом шаге** и смотреть что происходит — используйте режим отладки:
+
+```bash
+npx playwright test tests/e2e/avia-search.spec.ts --debug
+```
+
+Откроется браузер с панелью управления — можно нажимать «следующий шаг» и видеть выделенный элемент.
 
 ### Режим UI — самый удобный для начала
 
