@@ -219,12 +219,14 @@ npx playwright test tests/e2e/avia-search.spec.ts
 # Только в Chrome
 npx playwright test tests/e2e/avia-search.spec.ts --project=chromium
 
-# Тест по части названия
-npx playwright test -g "кнопка Найти заблокирована"
+# Тест по части названия (используйте текст без кавычек «»)
+npx playwright test -g "URL страницы корректный"
 
 # Все тесты с тегом @smoke
 npx playwright test --grep @smoke
 ```
+
+> ⚠️ **Важно про флаг `-g`:** он ищет текст внутри названия теста через регулярное выражение. Если в названии теста есть кавычки `«»` или скобки `()` — включать их в поиск не нужно, достаточно любой уникальной части текста.
 
 ### 👁 Запустить один тест с видимым браузером
 
@@ -234,12 +236,17 @@ npx playwright test --grep @smoke
 # Конкретный файл с видимым браузером
 npx playwright test tests/e2e/avia-search.spec.ts --headed
 
-# Один тест по названию (часть текста) с видимым браузером
-npx playwright test -g "клик на Тбилиси" --headed
+# Один тест по части названия + видимый браузер
+npx playwright test tests/e2e/avia-search.spec.ts -g "URL страницы корректный" --headed
 
-# Один тест по названию + только Chrome + видимый браузер
-npx playwright test -g "клик на Тбилиси" --headed --project=chromium
+# Один тест + только Chrome + видимый браузер (самый быстрый вариант)
+npx playwright test tests/e2e/avia-search.spec.ts -g "все элементы формы" --headed --project=chromium
+
+# Тест из другого файла по части названия + видимый браузер
+npx playwright test tests/e2e/avia-results.spec.ts -g "поиск через популярное направление" --headed --project=chromium
 ```
+
+> 💡 **Совет:** всегда указывайте конкретный файл перед `-g` — так Playwright не будет перебирать все файлы проекта.
 
 > 💡 **Совет:** добавьте `--project=chromium` чтобы не ждать Firefox и Safari — быстрее увидите результат.
 
