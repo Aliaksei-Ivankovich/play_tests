@@ -15,13 +15,14 @@
 - [Установка с нуля](#установка-с-нуля)
 - [Настройка окружения](#настройка-окружения)
 - [Запуск тестов](#запуск-тестов)
+- [Тесты alfabit.org — авиабилеты](#тесты-alfabitorg--авиабилеты)
 - [Как устроен тест](#как-устроен-тест)
 - [Написание первого теста](#написание-первого-теста)
 - [Паттерн Page Object Model](#паттерн-page-object-model)
 - [Полезные команды Playwright](#полезные-команды-playwright)
 - [Что делать когда тест упал](#что-делать-когда-тест-упал)
 - [CI/CD — автозапуск на GitHub](#cicd--автозапуск-на-github)
-- [Публикация на GitHub](#публикация-на-github)
+- [Репозиторий на GitHub](#репозиторий-на-github)
 - [Частые вопросы](#частые-вопросы)
 
 ---
@@ -71,43 +72,49 @@ play_tests/
 │
 ├── 📁 .github/
 │   └── 📁 workflows/
-│       ├── playwright.yml     # Автозапуск тестов на GitHub
-│       └── README.md          # Описание CI/CD
+│       ├── playwright.yml              # Автозапуск тестов на GitHub
+│       └── README.md                   # Описание CI/CD
 │
-├── 📁 pages/                  # Page Object Models — описание страниц приложения
-│   ├── BasePage.ts            # Общие методы для всех страниц
-│   ├── LoginPage.ts           # Страница входа (пример)
-│   ├── index.ts               # Список экспортов
-│   └── README.md              # Описание паттерна POM
+├── 📁 pages/                           # Page Object Models — описание страниц
+│   ├── BasePage.ts                     # Общие методы для всех страниц
+│   ├── AviaSearchPage.ts               # Страница поиска авиабилетов alfabit.org
+│   ├── AviaResultsPage.ts              # Страница результатов поиска
+│   ├── example.LoginPage.ts            # Пример POM страницы входа
+│   ├── index.ts                        # Список экспортов
+│   └── README.md                       # Описание паттерна POM
 │
-├── 📁 tests/                  # Все тесты
-│   ├── 📁 e2e/                # E2E тесты (основные сценарии)
-│   │   ├── example.spec.ts    # Рабочие примеры
-│   │   ├── login.spec.ts      # Шаблон тестов входа
-│   │   └── README.md          # Как писать тесты
+├── 📁 tests/                           # Все тесты
+│   ├── 📁 e2e/                         # E2E тесты
+│   │   ├── avia-search.spec.ts         # Тесты формы поиска авиабилетов ✅
+│   │   ├── avia-results.spec.ts        # Тесты страницы результатов поиска ✅
+│   │   ├── example.basic.spec.ts       # Базовые примеры Playwright
+│   │   ├── example.login.spec.ts       # Шаблон тестов авторизации
+│   │   └── README.md                   # Как писать тесты
 │   │
-│   ├── 📁 fixtures/           # Заготовки для тестов
-│   │   ├── base.fixtures.ts   # Базовые фикстуры
-│   │   └── README.md          # Что такое фикстуры
+│   ├── 📁 fixtures/                    # Заготовки для тестов
+│   │   ├── base.fixtures.ts            # Фикстуры: aviaSearchPage, aviaResultsPage, apiClient
+│   │   └── README.md                   # Что такое фикстуры
 │   │
-│   └── README.md              # Обзор папки tests/
+│   └── README.md                       # Обзор папки tests/
 │
-├── 📁 utils/                  # Вспомогательные инструменты
-│   ├── helpers.ts             # Мелкие функции-помощники
-│   ├── api.ts                 # HTTP клиент для API запросов
-│   ├── index.ts               # Список экспортов
-│   └── README.md              # Описание утилит
+├── 📁 utils/                           # Вспомогательные инструменты
+│   ├── helpers.ts                      # Мелкие функции-помощники
+│   ├── api.ts                          # HTTP клиент для API запросов
+│   ├── index.ts                        # Список экспортов
+│   └── README.md                       # Описание утилит
 │
-├── 📁 test-data/              # Тестовые данные (JSON файлы)
-│   ├── users.json             # Данные пользователей
-│   └── README.md              # Как работать с тестовыми данными
+├── 📁 test-data/                       # Тестовые данные (JSON файлы)
+│   ├── avia-search.json                # Маршруты, города и параметры для авиатестов
+│   ├── example.users.json              # Пример данных пользователей
+│   └── README.md                       # Как работать с тестовыми данными
 │
-├── .env.example               # Шаблон переменных окружения
-├── .gitignore                 # Что НЕ загружать на GitHub
-├── package.json               # Список зависимостей и команды запуска
-├── playwright.config.ts       # Настройки Playwright
-├── tsconfig.json              # Настройки TypeScript
-└── README.md                  # Этот файл
+├── .env                                # Локальные переменные окружения (не в git!)
+├── .env.example                        # Шаблон переменных окружения
+├── .gitignore                          # Что НЕ загружать на GitHub
+├── package.json                        # Список зависимостей и команды запуска
+├── playwright.config.ts                # Настройки Playwright
+├── tsconfig.json                       # Настройки TypeScript
+└── README.md                           # Этот файл
 ```
 
 > 📌 В каждой папке есть свой `README.md` с подробным описанием
@@ -130,8 +137,8 @@ node --version
 #### 2. Клонировать репозиторий
 
 ```bash
-git clone https://github.com/<ваш-username>/<имя-репозитория>.git
-cd <имя-репозитория>
+git clone https://github.com/Aliaksei-Ivankovich/play_tests.git
+cd play_tests
 ```
 
 > **Что такое `git clone`?** Это скачивание копии проекта с GitHub на ваш компьютер.
@@ -168,16 +175,17 @@ cp .env.example .env
 
 ### Шаг 2: Заполнить `.env` своими значениями
 
-Откройте файл `.env` и замените значения:
+Откройте файл `.env` и при необходимости замените значения. Для запуска текущих тестов (alfabit.org) файл уже настроен корректно:
 
 ```env
-# URL сайта, который тестируем
-BASE_URL=https://ваш-сайт.com
+# URL сайта, который тестируем (уже настроен для alfabit.org)
+BASE_URL=https://alfabit.org
 
-# Данные тестового пользователя
-TEST_USER_EMAIL=тест@пример.com
-TEST_USER_PASSWORD=ваш_тестовый_пароль
+# URL API (если отличается)
+API_URL=https://api.alfabit.org
 ```
+
+> Если вы захотите тестировать другой сайт — просто замените `BASE_URL`.
 
 ### ⚠️ Важно!
 
@@ -254,6 +262,62 @@ npm run test:ui
 - Запускать их по одному кнопкой
 - Видеть скриншоты каждого шага
 - Смотреть видеозапись теста
+
+---
+
+## ✈️ Тесты alfabit.org — авиабилеты
+
+В проекте реализованы реальные тесты для сайта **[alfabit.org/ru/travel/avia](https://alfabit.org/ru/travel/avia)** — поиск авиабилетов за криптовалюту.
+
+### Что тестируется
+
+#### `tests/e2e/avia-search.spec.ts` — форма поиска (21 тест)
+
+| Группа | Что проверяем |
+|---|---|
+| Загрузка страницы | Заголовок, URL, вкладки навигации |
+| Форма поиска | Видимость полей, код аэропорта по умолчанию, поле даты |
+| Кнопка «Найти» | Заблокирована без маршрута, активна после выбора |
+| Популярные направления | Отображение городов, клик → редирект на результаты |
+| Параметры URL | `from=MOW`, `to=TBS`, `class=e` после выбора направления |
+| Dropdown пассажиров | Классы перелёта, категории пассажиров, переключение класса |
+
+#### `tests/e2e/avia-results.spec.ts` — результаты поиска (23 теста)
+
+| Группа | Что проверяем |
+|---|---|
+| URL и параметры | `from`, `to`, `adults`, `class`, `roundtrip` |
+| Загрузка результатов | Хотя бы один рейс найден, заголовок маршрута |
+| Карточка рейса | Авиакомпания, время вылета/прилёта, цена в USDT, кнопка «Выбрать», длительность |
+| Фильтры | «С багажом», «Прямые», «Дневные», «Ночные» — видимость и кликабельность |
+| Полный E2E | Форма → клик на направление → результаты |
+
+### Быстрый запуск тестов alfabit.org
+
+```bash
+# Форма поиска
+npx playwright test tests/e2e/avia-search.spec.ts --project=chromium
+
+# Результаты поиска
+npx playwright test tests/e2e/avia-results.spec.ts --project=chromium
+
+# Все тесты с видимым браузером
+npx playwright test tests/e2e/avia-search.spec.ts tests/e2e/avia-results.spec.ts --headed --project=chromium
+```
+
+### Тестовые данные
+
+Данные для тестов хранятся в `test-data/avia-search.json`:
+- Маршруты: MOW→TBS (Москва–Тбилиси), MOW→BAK (Москва–Баку)
+- Списки популярных направлений и классов перелётов
+- URL паттерны для проверки
+
+### Page Object Models
+
+| Файл | Описание |
+|---|---|
+| `pages/AviaSearchPage.ts` | Форма поиска: поля, автокомплит, пассажиры, кнопка «Найти» |
+| `pages/AviaResultsPage.ts` | Результаты: карточки рейсов, фильтры, данные о рейсе |
 
 ---
 
@@ -552,7 +616,7 @@ npm run test:report
 ### 3. Запустите тест в режиме отладки
 
 ```bash
-npx playwright test tests/e2e/login.spec.ts --debug
+npx playwright test tests/e2e/avia-search.spec.ts --debug
 ```
 
 Откроется браузер с панелью управления — можно идти по шагам и смотреть что происходит.
@@ -560,7 +624,7 @@ npx playwright test tests/e2e/login.spec.ts --debug
 ### 4. Запустите с видимым браузером
 
 ```bash
-npx playwright test tests/e2e/login.spec.ts --headed --project=chromium
+npx playwright test tests/e2e/avia-search.spec.ts --headed --project=chromium
 ```
 
 ---
@@ -582,42 +646,43 @@ npx playwright test tests/e2e/login.spec.ts --headed --project=chromium
 
 ---
 
-## 🐙 Публикация на GitHub
+## 🐙 Репозиторий на GitHub
 
-### Шаг 1: Создайте репозиторий на GitHub
+Проект уже опубликован и доступен по адресу:
 
-1. Войдите на [github.com](https://github.com)
-2. Нажмите **New repository** (зелёная кнопка)
-3. Введите название репозитория
-4. Выберите **Public** (чтобы делиться) или **Private**
-5. Нажмите **Create repository**
+👉 **[github.com/Aliaksei-Ivankovich/play_tests](https://github.com/Aliaksei-Ivankovich/play_tests)**
 
-### Шаг 2: Подключите локальный проект к GitHub
+### Как отправить изменения
 
 ```bash
-git remote add origin https://github.com/<ваш-username>/<имя-репо>.git
-git push -u origin main
+git add .
+git commit -m "описание изменений"
+git push
 ```
 
-### Шаг 3: Добавьте секреты для CI/CD
+После `git push` во вкладке **Actions** автоматически запустится CI-пайплайн.
+
+### Как поделиться проектом
+
+Отправьте коллеге ссылку на репозиторий. Для запуска у него на компьютере:
+
+```bash
+git clone https://github.com/Aliaksei-Ivankovich/play_tests.git
+cd play_tests
+npm install
+npx playwright install
+cp .env.example .env   # файл .env уже настроен для alfabit.org
+npm test
+```
+
+### Секреты для CI/CD
 
 Перейдите: **Settings** → **Secrets and variables** → **Actions** → **New repository secret**
 
 | Секрет | Значение |
 |---|---|
-| `BASE_URL` | URL вашего тестового окружения |
-| `API_URL` | URL API (если используется) |
-
-### Шаг 4: Проверьте что всё работает
-
-После `git push` перейдите во вкладку **Actions** — должен появиться запущенный пайплайн.
-
-### Как поделиться проектом
-
-- Дайте коллеге ссылку на репозиторий
-- Он делает `git clone`, затем `npm install` и `npx playwright install`
-- Создаёт свой `.env` по шаблону `.env.example`
-- Готово — тесты запускаются!
+| `BASE_URL` | `https://alfabit.org` |
+| `API_URL` | `https://api.alfabit.org` |
 
 ---
 
