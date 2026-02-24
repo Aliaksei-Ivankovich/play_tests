@@ -5,7 +5,7 @@ import { Page, Locator } from '@playwright/test';
  * Содержит общие методы навигации и взаимодействия со страницей.
  */
 export class BasePage {
-  protected readonly page: Page;
+  readonly page: Page;
 
   constructor(page: Page) {
     this.page = page;

@@ -1,5 +1,5 @@
 import { test, expect } from '../fixtures/base.fixtures';
-import users from '../../test-data/users.json';
+import users from '../../test-data/example.users.json';
 
 /**
  * Пример тестов для страницы входа.

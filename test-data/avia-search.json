@@ -1,0 +1,39 @@
+{
+  "routes": {
+    "mosToTbs": {
+      "from": "MOW",
+      "to": "TBS",
+      "fromCity": "Москва",
+      "toCity": "Тбилиси",
+      "date": "25.02.2026",
+      "adults": 1,
+      "children": 0,
+      "infants": 0,
+      "class": "e",
+      "roundtrip": false
+    },
+    "mosToBaku": {
+      "from": "MOW",
+      "to": "BAK",
+      "fromCity": "Москва",
+      "toCity": "Баку",
+      "date": "25.02.2026",
+      "adults": 1,
+      "children": 0,
+      "infants": 0,
+      "class": "e",
+      "roundtrip": false
+    }
+  },
+  "popularDestinations": [
+    "Тбилиси",
+    "Баку",
+    "Дубай",
+    "Ереван",
+    "Минск"
+  ],
+  "tripClasses": ["Эконом", "Комфорт", "Бизнес", "Первый"],
+  "passengerCategories": ["Взрослые", "Дети", "Младенцы"],
+  "expectedPageTitle": "Alfabit Travel",
+  "expectedSearchUrlPattern": "/ru/travel/avia/search_results"
+}
