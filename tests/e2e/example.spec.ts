@@ -31,8 +31,10 @@ test.describe('Примеры базовых тестов', () => {
     const searchButton = page.getByRole('button', { name: /search/i });
     if (await searchButton.isVisible()) {
       await searchButton.click();
-      await page.keyboard.type('assertions');
-      await expect(page.getByRole('searchbox')).toHaveValue('assertions');
+      const searchbox = page.getByRole('searchbox');
+      await searchbox.waitFor({ state: 'visible' });
+      await searchbox.fill('assertions');
+      await expect(searchbox).toHaveValue('assertions');
     }
   });
 
